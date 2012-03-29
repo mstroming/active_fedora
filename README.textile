@@ -1,4 +1,4 @@
-h1. Permanently Moved
+h1. ActiveFedora -- Permanently Moved!
 
 This code has moved to the projecthydra account on github.
 
