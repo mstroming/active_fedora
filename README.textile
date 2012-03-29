@@ -2,4 +2,4 @@ h1. Permanently Moved
 
 This code has moved to the projecthydra account on github.
 
-https://github.com/projecthydra/active_fedora
+"https://github.com/projecthydra/active_fedora":https://github.com/projecthydra/active_fedora
