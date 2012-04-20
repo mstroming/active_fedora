@@ -109,7 +109,12 @@ module ActiveFedora
           hits = SolrService.query(q, :rows=>opts[:rows])           
           
           if block_given?
-            hits.each {|hit| pid = hit[SOLR_DOCUMENT_ID]; obj=find_one(pid, opts[:cast]); block.call(obj)}
+            hits.each {|hit| pid = hit[SOLR_DOCUMENT_ID]
+            if !pid.empty?
+              obj=find_one(pid, opts[:cast])
+              block.call(obj)
+            end
+            }
           else
             return hits.map do |hit|
               pid = hit[SOLR_DOCUMENT_ID]
