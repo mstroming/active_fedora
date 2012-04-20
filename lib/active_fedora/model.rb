@@ -114,6 +114,7 @@ module ActiveFedora
             puts "pid:" + pid
             if !pid.nil? && !pid.empty?
               puts "find_one"
+              puts "pid:" + pid
               obj=find_one(pid, opts[:cast])
               puts "block.call"
               block.call(obj)
