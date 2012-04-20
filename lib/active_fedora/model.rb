@@ -104,23 +104,18 @@ module ActiveFedora
       def find(args, opts={}, &block)
         opts = {:rows=>25}.merge(opts)
         if args == :all
-          puts "args==:all"
           escaped_class_uri = SolrService.escape_uri_for_query(self.to_class_uri)
           q = "#{ActiveFedora::SolrService.solr_name(:has_model, :symbol)}:#{escaped_class_uri}"
           hits = SolrService.query(q, :rows=>opts[:rows])           
           
           if block_given?
-          puts "block given"
-            hits.each {|hit| pid = hit[SOLR_DOCUMENT_ID]
-            puts "pid:" + pid
-            if !pid.nil? && !pid.empty?
-              puts "find_one"
-              puts "pid:" + pid
-              obj=find_one(pid, opts[:cast])
-              puts "block.call"
-              block.call(obj)
+            hits.each do |hit|
+              pid = hit[SOLR_DOCUMENT_ID]
+              if !pid.nil? && !pid.empty?
+                obj=find_one(pid, opts[:cast])
+                block.call(obj)
+              end
             end
-            }
           else
             return hits.map do |hit|
               pid = hit[SOLR_DOCUMENT_ID]
@@ -129,7 +124,6 @@ module ActiveFedora
           end
           
         elsif args.class == String
-          puts "not args==:all"
           return find_one(args, opts[:cast])
         end
       end
