@@ -101,16 +101,22 @@ module ActiveFedora
       # @param [Hash] opts the options to create a message with.
       # @option opts [Integer] :rows when :all is passed, the maximum number of rows to load from solr
       # @option opts [Boolean] :cast when true, examine the model and cast it to the first known cModel
-      def find(args, opts={})
+      def find(args, opts={}, &block)
         opts = {:rows=>25}.merge(opts)
         if args == :all
           escaped_class_uri = SolrService.escape_uri_for_query(self.to_class_uri)
           q = "#{ActiveFedora::SolrService.solr_name(:has_model, :symbol)}:#{escaped_class_uri}"
-          hits = SolrService.query(q, :rows=>opts[:rows]) 
-          return hits.map do |hit|
-             pid = hit[SOLR_DOCUMENT_ID]
-             find_one(pid, opts[:cast])
+          hits = SolrService.query(q, :rows=>opts[:rows])           
+          
+          if block_given?
+            hits.each {|hit| pid = hit[SOLR_DOCUMENT_ID]; obj=find_one(pid, opts[:cast]); block.call(obj)}
+          else
+            return hits.map do |hit|
+              pid = hit[SOLR_DOCUMENT_ID]
+              find_one(pid, opts[:cast])
+            end
           end
+          
         elsif args.class == String
           return find_one(args, opts[:cast])
         end
