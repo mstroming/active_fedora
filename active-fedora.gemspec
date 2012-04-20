@@ -4,7 +4,7 @@ require "active_fedora/version"
 
 Gem::Specification.new do |s|
   s.name        = "active-fedora"
-  s.version     = ActiveFedora::VERSION
+  s.version     = "4.0.0.rc20"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Matt Zumwalt", "McClain Looney", "Justin Coyne"]
   s.email       = ["matt.zumwalt@yourmediashelf.com"]
