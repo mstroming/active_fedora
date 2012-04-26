@@ -105,7 +105,7 @@ module ActiveFedora
         opts = {:rows=>25}.merge(opts)
         if args == :all
           escaped_class_uri = SolrService.escape_uri_for_query(self.to_class_uri)
-          q = "#{ActiveFedora::SolrService.solr_name(:has_model, :symbol)}:#{escaped_class_uri}"
+          q = "#{ActiveFedora::SolrService.solr_name(:has_model, :symbol)}:#{escaped_class_uri}&fl:id"
           hits = SolrService.query(q, :rows=>opts[:rows])           
           
           if block_given?
