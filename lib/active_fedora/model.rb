@@ -116,32 +116,22 @@ module ActiveFedora
         end
       end
       
-       def find_each(args, opts={}, &block)
+       def find_each(opts={})
         opts = {:rows=>25}.merge(opts)
-        if args == :all
+
           escaped_class_uri = SolrService.escape_uri_for_query(self.to_class_uri)
           q = "#{ActiveFedora::SolrService.solr_name(:has_model, :symbol)}:#{escaped_class_uri}"
           hits = SolrService.query(q, :rows=>opts[:rows], :fl=>'id')           
-          
-          if block_given?
-            hits.each do |hit|
-              pid = hit[SOLR_DOCUMENT_ID]
-              if !pid.nil? && !pid.empty?
-                obj=find_one(pid, opts[:cast])
-                block.call(obj)
-              end
-            end
-          else
-            return hits.map do |hit|
-              pid = hit[SOLR_DOCUMENT_ID]
-              find_one(pid, opts[:cast])
+        
+          hits.each do |hit|
+            pid = hit[SOLR_DOCUMENT_ID]
+            if pid.present?
+              obj=find_one(pid, opts[:cast])
+              yield(obj)
             end
           end
-          
-        elsif args.class == String
-          return find_one(args, opts[:cast])
-        end
-      end
+                  
+       end
 
       # Returns true if the pid exists in the repository 
       # @param[String] pid 
