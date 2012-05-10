@@ -94,7 +94,24 @@ describe ActiveFedora::Model do
       end
     end
   end
-
+  
+  describe '#find_each' do
+    describe "without :cast" do
+      it "should query solr for all objects with :active_fedora_model_s of self.class" do
+        ActiveFedora::SolrService.expects(:query).with('has_model_s:info\\:fedora/afmodel\\:SpecModel_Basic', :rows=>1001, :fl=>'id').returns([{"id" => "changeme:30"}, {"id" => "changeme:22"}])
+        
+        SpecModel::Basic.expects(:find_one).with("changeme:30", nil).returns({"id"=>"changeme:30"})
+        SpecModel::Basic.expects(:find_one).with("changeme:22", nil).returns({"id"=>"changeme:22"})
+        SpecModel::Basic.find_each(:rows=>1001){|obj| puts obj}.should == [{"id"=>"changeme:30"}, {"id"=>"changeme:22"}]
+      end
+      it "should raise an exception if it is not found" do
+        SpecModel::Basic.expects(:connection_for_pid).with("_PID_")
+        lambda {SpecModel::Basic.find_each(:rows=>1001)}.should raise_error ActiveFedora::ObjectNotFoundError
+      end
+    end
+  end
+ 
+  
   describe '#count' do
     
     it "should return a count" do
